@@ -4,7 +4,6 @@ import { parse as yamlParse } from "yaml";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
-import { applyExtensionDefaults } from "./themeMap.ts";
 
 interface Rule {
 	pattern: string;
@@ -59,7 +58,6 @@ export default function (pi: ExtensionAPI) {
 	}
 
 	pi.on("session_start", async (_event, ctx) => {
-		applyExtensionDefaults(import.meta.url, ctx);
 		const projectRulesPath = path.join(ctx.cwd, ".pi", "damage-control-rules.yaml");
 		const globalRulesPath = path.join(os.homedir(), ".pi", "damage-control-rules.yaml");
 		const rulesPath = fs.existsSync(projectRulesPath) ? projectRulesPath : fs.existsSync(globalRulesPath) ? globalRulesPath : null;

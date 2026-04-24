@@ -23,7 +23,6 @@ import { Text, type AutocompleteItem, truncateToWidth, visibleWidth } from "@mar
 import { spawn } from "child_process";
 import { readdirSync, readFileSync, existsSync, mkdirSync, unlinkSync } from "fs";
 import { join, resolve } from "path";
-import { applyExtensionDefaults } from "./themeMap.ts";
 
 // ── Types ────────────────────────────────────────
 
@@ -669,7 +668,6 @@ ${agentCatalog}`,
 	// ── Session Start ────────────────────────────
 
 	pi.on("session_start", async (_event, _ctx) => {
-		applyExtensionDefaults(import.meta.url, _ctx);
 		// Clear widgets from previous session
 		if (widgetCtx) {
 			widgetCtx.ui.setWidget("agent-team", undefined);

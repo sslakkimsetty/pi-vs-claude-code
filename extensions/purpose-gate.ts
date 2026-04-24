@@ -10,7 +10,6 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Text, truncateToWidth } from "@mariozechner/pi-tui";
-import { applyExtensionDefaults } from "./themeMap.ts";
 
 // synthwave: bgWarm #4a1e6a → rgb(74,30,106)
 function bg(s: string): string {
@@ -63,7 +62,6 @@ export default function (pi: ExtensionAPI) {
 	}
 
 	pi.on("session_start", async (_event, ctx) => {
-		applyExtensionDefaults(import.meta.url, ctx);
 		void askForPurpose(ctx);
 	});
 

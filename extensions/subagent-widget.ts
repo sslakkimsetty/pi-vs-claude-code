@@ -20,7 +20,6 @@ const { spawn } = require("child_process") as any;
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { applyExtensionDefaults } from "./themeMap.ts";
 
 interface SubState {
 	id: number;
@@ -467,7 +466,6 @@ export default function (pi: ExtensionAPI) {
 	// ── Session lifecycle ─────────────────────────────────────────────────────
 
 	pi.on("session_start", async (_event, ctx) => {
-		applyExtensionDefaults(import.meta.url, ctx);
 		for (const [id, state] of Array.from(agents.entries())) {
 			if (state.proc && state.status === "running") {
 				state.proc.kill("SIGTERM");

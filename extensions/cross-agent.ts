@@ -13,7 +13,6 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { join, basename } from "node:path";
 import { homedir } from "node:os";
-import { applyExtensionDefaults } from "./themeMap.ts";
 import { wrapTextWithAnsi, visibleWidth } from "@mariozechner/pi-tui";
 
 // --- Synthwave palette ---
@@ -206,8 +205,6 @@ export default function (pi: ExtensionAPI) {
 	// ── Boot notification (session_start, fine for UI calls) ─────────────────
 
 	pi.on("session_start", async (_event, ctx) => {
-		applyExtensionDefaults(import.meta.url, ctx);
-
 		if (groups.length === 0) return;
 
 		// We delay slightly so it doesn't get instantly overwritten by system-select's default startup notify
