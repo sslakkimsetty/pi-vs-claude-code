@@ -1,5 +1,4 @@
 import { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { applyExtensionDefaults } from "./themeMap.ts";
 import { 
   Box, Text, Markdown, Container, Spacer, 
   matchesKey, Key, truncateToWidth, getMarkdownTheme 
@@ -211,6 +210,5 @@ export default function(pi: ExtensionAPI) {
     });
 
     pi.on("session_start", async (_event, ctx) => {
-        applyExtensionDefaults(import.meta.url, ctx);
     });
 }

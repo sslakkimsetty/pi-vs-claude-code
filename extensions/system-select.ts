@@ -16,7 +16,6 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, basename } from "node:path";
 import { homedir } from "node:os";
-import { applyExtensionDefaults } from "./themeMap.ts";
 
 interface AgentDef {
 	name: string;
@@ -67,7 +66,6 @@ export default function (pi: ExtensionAPI) {
 	let defaultTools: string[] = [];
 
 	pi.on("session_start", async (_event, ctx) => {
-		applyExtensionDefaults(import.meta.url, ctx);
 		activeAgent = null;
 		allAgents = [];
 

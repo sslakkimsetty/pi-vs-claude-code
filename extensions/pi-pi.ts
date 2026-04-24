@@ -21,7 +21,6 @@ import { Text, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 import { spawn } from "child_process";
 import { readdirSync, readFileSync, existsSync, mkdirSync } from "fs";
 import { join, resolve } from "path";
-import { applyExtensionDefaults } from "./themeMap.ts";
 
 // ── Types ────────────────────────────────────────
 
@@ -582,7 +581,6 @@ Ask specific questions about what you need to BUILD. Each expert will return doc
 	// ── Session Start ────────────────────────────
 
 	pi.on("session_start", async (_event, _ctx) => {
-		applyExtensionDefaults(import.meta.url, _ctx);
 		if (widgetCtx) {
 			widgetCtx.ui.setWidget("pi-pi-grid", undefined);
 		}
