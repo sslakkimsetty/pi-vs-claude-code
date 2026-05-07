@@ -27,6 +27,7 @@ import { Text, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 import { spawn } from "child_process";
 import { readFileSync, existsSync, readdirSync, mkdirSync, unlinkSync } from "fs";
 import { join, resolve } from "path";
+import { homedir } from "os";
 
 // ── Types ────────────────────────────────────────
 
@@ -163,6 +164,7 @@ function scanAgentDirs(cwd: string): Map<string, AgentDef> {
 		join(cwd, "agents"),
 		join(cwd, ".claude", "agents"),
 		join(cwd, ".pi", "agents"),
+		join(homedir(), ".pi", "agents"),
 	];
 
 	const agents = new Map<string, AgentDef>();
