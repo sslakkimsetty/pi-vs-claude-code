@@ -27,7 +27,6 @@ import { Text, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 import { spawn } from "child_process";
 import { readFileSync, existsSync, readdirSync, mkdirSync, unlinkSync } from "fs";
 import { join, resolve } from "path";
-import { homedir } from "os";
 
 // ── Types ────────────────────────────────────────
 
@@ -160,18 +159,19 @@ function parseAgentFile(filePath: string): AgentDef | null {
 }
 
 function scanAgentDirs(cwd: string): Map<string, AgentDef> {
+	const home = process.env.HOME;
 	const dirs = [
 		join(cwd, "agents"),
 		join(cwd, ".claude", "agents"),
 		join(cwd, ".pi", "agents"),
-		join(homedir(), ".pi", "agents"),
+		...(home ? [join(home, ".pi", "agents")] : []),
 	];
 
 	const agents = new Map<string, AgentDef>();
 
 	for (const dir of dirs) {
-		if (!existsSync(dir)) continue;
 		try {
+			if (!existsSync(dir)) continue;
 			for (const file of readdirSync(dir)) {
 				if (!file.endsWith(".md")) continue;
 				const fullPath = resolve(dir, file);
@@ -214,8 +214,13 @@ export default function (pi: ExtensionAPI) {
 			agentSessions.set(key, existsSync(sessionFile) ? sessionFile : null);
 		}
 
-		const chainPath = join(cwd, ".pi", "agents", "agent-chain.yaml");
-		if (existsSync(chainPath)) {
+		const home = process.env.HOME;
+		const chainPaths = [
+			join(cwd, ".pi", "agents", "agent-chain.yaml"),
+			...(home ? [join(home, ".pi", "agents", "agent-chain.yaml")] : []),
+		];
+		const chainPath = chainPaths.find(p => existsSync(p));
+		if (chainPath) {
 			try {
 				chains = parseChainYaml(readFileSync(chainPath, "utf-8"));
 			} catch {
