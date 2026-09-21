@@ -121,7 +121,8 @@ all:
 # ------------------------ coms + coms-net (HTTP/SSE hub) ------------------------
 
 # Coms: peer-to-peer, same machine messaging between Pi agents
-# Pass any pi/extension flags through, e.g.: just ext-coms --name dev --color "#72F1B8"
+# Agent name flag is --cname (pi owns --name). Pass both so pi's session and the
+# coms agent share a name, e.g.: just local-coms --name dev --cname dev --color "#72F1B8"
 local-coms *args:
     pi -e extensions/coms.ts -e extensions/minimal.ts -e extensions/theme-cycler.ts {{args}}
 
@@ -138,11 +139,12 @@ coms-net-server-lan:
     PI_COMS_NET_HOST=0.0.0.0 bun scripts/coms-net-server.ts
 
 # Pi with networked coms client (auto-discovers local server.json)
-# Pass any flags through, e.g.: just ext-coms-net --name dev --server-url http://… --auth-token …
+# Agent name flag is --cname (pi owns --name). Pass both so pi's session and the
+# coms-net agent share a name, e.g.: just coms --name dev --cname dev --server-url http://… --auth-token …
 coms *args:
     pi -e extensions/coms-net.ts -e extensions/minimal.ts -e extensions/theme-cycler.ts {{args}}
 
-# coms-net with gpt-5.5 (extra args still pass through, e.g. --name dev)
+# coms-net with gpt-5.5 (extra args still pass through, e.g. --name dev --cname dev)
 coms1 *args:
     pi -e extensions/coms-net.ts -e extensions/minimal.ts -e extensions/theme-cycler.ts --provider openai --model gpt-5.5 {{args}}
 

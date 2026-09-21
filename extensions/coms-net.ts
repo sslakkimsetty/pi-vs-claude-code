@@ -20,7 +20,10 @@
  *   bun scripts/coms-net-server.ts                                 # start hub
  *   pi -e extensions/coms-net.ts                                   # auto-discover local server.json
  *   pi -e extensions/coms-net.ts --server-url http://host:port \
- *      --auth-token <tok> --name planner --project default
+ *      --auth-token <tok> --cname planner --project default
+ *
+ * Note: the agent name flag is `--cname` (not `--name`). pi's own harness owns
+ * `--name` and resumes it across sessions, so coms-net uses a distinct flag.
  */
 
 import type { ExtensionAPI, ExtensionContext, Theme } from "@mariozechner/pi-coding-agent";
@@ -346,7 +349,7 @@ interface CliFlags {
 }
 
 function readCliFlags(pi: ExtensionAPI): CliFlags {
-	const name = pi.getFlag("name") as string | undefined;
+	const name = pi.getFlag("cname") as string | undefined;
 	const purpose = pi.getFlag("purpose") as string | undefined;
 	const project = pi.getFlag("project") as string | undefined;
 	const color = pi.getFlag("color") as string | undefined;
@@ -368,8 +371,9 @@ function readCliFlags(pi: ExtensionAPI): CliFlags {
 
 export default function (pi: ExtensionAPI) {
 	// ━━ Identity flags ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-	pi.registerFlag("name", {
-		description: "Override agent name (otherwise from frontmatter or auto-generated)",
+	// Agent name flag is `--cname`: pi's harness owns `--name` and resumes it.
+	pi.registerFlag("cname", {
+		description: "Override coms-net agent name (otherwise from frontmatter or auto-generated). Distinct from pi's own --name, which the harness owns and resumes.",
 		type: "string",
 		default: undefined,
 	});

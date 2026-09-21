@@ -222,7 +222,7 @@ interface CliFlags {
 function readCliFlags(pi: ExtensionAPI): CliFlags {
 	// Identity flags are declared via pi.registerFlag at extension load time so
 	// pi's CLI parser accepts them; here we just read them back.
-	const name = pi.getFlag("name") as string | undefined;
+	const name = pi.getFlag("cname") as string | undefined;
 	const purpose = pi.getFlag("purpose") as string | undefined;
 	const project = pi.getFlag("project") as string | undefined;
 	const color = pi.getFlag("color") as string | undefined;
@@ -531,9 +531,10 @@ function readFrontmatterFromArgv(argv: string[]): { name?: string; description?:
 export default function (pi: ExtensionAPI) {
 	// ━━ Register identity CLI flags so pi's parser accepts them. ━━━━━━━━━
 	// Without these, pi 0.73+ rejects the invocation with "Unknown options:
-	// --name, --project, ..." before this extension's hooks ever fire.
-	pi.registerFlag("name", {
-		description: "Override agent name (otherwise from frontmatter or auto-generated)",
+	// --cname, --project, ..." before this extension's hooks ever fire.
+	// Agent name flag is `--cname`: pi's harness owns `--name` and resumes it.
+	pi.registerFlag("cname", {
+		description: "Override coms agent name (otherwise from frontmatter or auto-generated). Distinct from pi's own --name, which the harness owns and resumes.",
 		type: "string",
 		default: undefined,
 	});

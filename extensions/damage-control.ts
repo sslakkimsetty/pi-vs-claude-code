@@ -33,6 +33,24 @@ export default function (pi: ExtensionAPI) {
 		return path.resolve(cwd, p);
 	}
 
+	function expandTilde(p: string): string {
+		return p.startsWith("~") ? path.join(os.homedir(), p.slice(1)) : p;
+	}
+
+	// Substring search that only counts a hit when the next char is not a path-word char.
+	// Prevents `~/Desktop/YT` from matching `~/Desktop/YT_archive`, while still matching
+	// `~/Desktop/YT`, `~/Desktop/YT/foo`, `~/Desktop/YT"`, `~/Desktop/YT ` (space = boundary).
+	function commandReferencesPath(command: string, protectedPath: string): boolean {
+		if (!protectedPath) return false;
+		let idx = command.indexOf(protectedPath);
+		while (idx >= 0) {
+			const after = command[idx + protectedPath.length];
+			if (!after || !/[A-Za-z0-9_-]/.test(after)) return true;
+			idx = command.indexOf(protectedPath, idx + 1);
+		}
+		return false;
+	}
+
 	function isPathMatch(targetPath: string, pattern: string, cwd: string): boolean {
 		// Simple glob-to-regex or substring match
 		// Expand tilde in pattern if present
@@ -159,10 +177,15 @@ export default function (pi: ExtensionAPI) {
 				}
 
 				if (!violationReason) {
-					for (const ndp of rules.noDeletePaths) {
-						if (command.includes(ndp) && (command.includes("rm") || command.includes("mv"))) {
-							violationReason = `Bash command attempts to delete/move protected path: ${ndp}`;
-							break;
+					const hasDeleteOrMove = /\brm\b/.test(command) || /\bmv\b/.test(command);
+					if (hasDeleteOrMove) {
+						for (const ndp of rules.noDeletePaths) {
+							const expanded = expandTilde(ndp);
+							const matched = commandReferencesPath(command, ndp) || (expanded !== ndp && commandReferencesPath(command, expanded));
+							if (matched) {
+								violationReason = `Bash command attempts to delete/move protected path: ${ndp}`;
+								break;
+							}
 						}
 					}
 				}
